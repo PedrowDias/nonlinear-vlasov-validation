@@ -2,8 +2,9 @@
 
 P. de Carvalho Dias Werneck, T. Pieloni, N. Mounet
 
-This repository holds the scripts that produced every number, table and figure of the numerical validation and the
-conclusion of the paper (Secs. V and VI), and the results they wrote. The solvers are DELPHI, the direct Vlasov solver for
+This repository holds the scripts that compute every number, table and figure of the numerical validation and the
+conclusion of the paper (Secs. V and VI), and the results they write. They are a refactored version of the scripts that
+produced the stored results, and reproduce them (Reproducibility, below). The solvers are DELPHI, the direct Vlasov solver for
 linear synchrotron motion, and its extension to the nonlinear motion of a sinusoidal rf bucket, the subject of the paper;
 the macroparticle simulations use Xsuite.
 
@@ -32,7 +33,13 @@ print.
   `make lib` in the `DELPHI/DELPHI` folder and needs g++, gfortran, GSL, LAPACK and BLAS. The scripts import `DELPHI`,
   `nonlinear` and `particle_param` from the checkout's `DELPHI_Python` folder, which they look for next to this repository
   (`../DELPHI/DELPHI_Python`) or at the path in the environment variable `DELPHI_PYTHON`.
+- DELPHI's Python module reads the user name from the environment variable `USER` when it is imported. Where `USER` is not
+  set (in a container, for instance), set it first: `export USER=$(id -un)`.
 - Memory: DELPHI at (l_max, n_max) = (6,32) or larger on the LHC broad-band impedance table needs more than 4 GB per process.
+- For the coupled-bunch and PSB cases, DELPHI's nonlinear module prints `warning: compute_impedance_matrix: impedance table
+  exhausted ... before convergence`. This is expected: the stored values were computed with these tables, and extending
+  them (the PSB's from 50 to 200 MHz, the coupled-bunch one from 5 to 10 GHz) changes the eigenvalues by at most 1.2e-9
+  relative.
 
 ## Scripts
 
@@ -89,12 +96,14 @@ The checks that the text of Sec. V quotes, each writing to `data/validation/`:
 was computed on x86 Linux against the Apple M3 values, and it is not part of `run_all.sh`.
 
 Several scripts keep the results they find in their file, so that a long run can be resumed: `linear_limit.py` merges the
-configurations it is given into `linear_limit.json`, `resistive_wall.py` keeps the stored simulations it finds, and most
-validation scripts skip the runs already stored. The others rewrite their file run by run.
+configurations it is given into `linear_limit.json`, `resistive_wall.py` keeps the stored simulations and, given slice
+counts (`python3 resistive_wall.py 12800 25600`), skips those already stored, and most validation scripts skip the runs
+already stored. The others rewrite their file run by run.
 
-`run_all.sh` moves the stored `data/` aside and runs everything in an order that respects what each script reads, then
-`figures.py` and `paper_numbers.py`. It takes weeks of computing time on one machine (most scripts take hours,
-`resistive_wall.py` days); the comments in it say which scripts can run in parallel.
+`run_all.sh` moves the stored `data/` aside, copies back the one result it does not recompute (`psb_delphi_x86.json`), and
+runs everything in an order that respects what each script reads, then `figures.py` and `paper_numbers.py`. It takes weeks
+of computing time on one machine (most scripts take hours, `resistive_wall.py` days); the comments in it say which scripts
+can run in parallel, memory permitting.
 
 ## Results
 
@@ -108,8 +117,9 @@ units of 1e11 in `tmci.json`, `taub` in ns, `damping` in Q_s, `slices`, `nx`, ..
 `seeded`, `kicked`, or, at three points of `bunch_length.json`, `seeded mode -1`, whose kicked runs are kept as `g_kicked`,
 `re_kicked`). `psb.json` also gives the predictions with the impedance at the betatron lines (`gp_line`, `rep_line`) and
 DELPHI's; `resistive_wall.json` stores the solver scans separately from the simulations; `coupled_bunch.json` stores
-whether the smaller basis reproduces each eigenvalue (`held`); `linear_limit.json` holds solver scans only. The scripts
-also save the centroid signal of every run to `data/signals/` (not part of the repository).
+whether the smaller basis reproduces each eigenvalue (`held`); `linear_limit.json` holds solver scans only. Most
+single-bunch LHC scripts (the tmci, chromaticity, bunch-length, distribution and damper scans and several of the checks)
+also save the centroid signal of each run to `data/signals/` (not part of the repository).
 
 ## Reproducibility
 
@@ -118,9 +128,9 @@ before xpart draws the transverse coordinates (`common.matched`, seed 1), the lo
 `numpy.random.default_rng(seed)`, and the coupled-bunch runs start from a quiet bunch. The stored results were computed on
 an Apple M3. On another machine the floating-point results differ in the last digits. On x86 Linux, with the same package
 versions, the solvers' eigenvalues for the LHC cases agree with the stored ones to within 6e-14 Q_s wherever checked; this
-changes the eigenvectors that seed the simulations at the 1e-13 level, and of 25 simulations rerun for their first 200
-turns, 23 reproduce the stored centroid signals (single precision) bit for bit and the other two agree to 2e-13 and 1.5e-14
+changes the eigenvectors that seed the simulations at the 1e-13 level, and of 25 simulations rerun for up to their first
+200 turns, 23 reproduce the stored centroid signals (single precision) bit for bit and the other two agree to 2e-13 and 1.5e-14
 relative. The exception is DELPHI's PSB scan with its 39-term Laguerre-series parabola, an ill-conditioned problem: from
-Q' = -6 to +4 its eigenvalues differ between the two machines by 1e-14 to 1e-5 Q_s, and at Q' = -8 and -7 its most unstable
+Q' = -6 to +4 its eigenvalues differ between the two machines by 1e-14 to 4e-5 Q_s, and at Q' = -8 and -7 its most unstable
 mode is a different one, with a growth rate 9% and 0.5% apart (`psb_delphi_x86.json`, Sec. V E of the paper). A different
 seed of the macroparticle draw scatters the tracked growth rates by up to about 1% (`multiseed.py`).

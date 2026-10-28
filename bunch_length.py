@@ -28,6 +28,7 @@ max_turns = 200_000             # of a kicked run
 efoldings = 25                  # of a kicked run: two modes grow at nearly the same rate for long bunches at Q' = +5
 max_turns_seeded = 150_000
 kick_sigma = 1e-3
+slicer_nsigma = 6               # the linearized bucket's slicer reaches at least this many sigma_z
 amp_rescale = 1e-3
 seed = 1                        # of the macroparticle draw
 # the linearized points at Q' = +5 seeded with mode -1; the seeded runs take tau_b as written here (1.6e-9 and the
@@ -72,7 +73,7 @@ def machine(mode, Qp, taub):
     # The linearized rf is unbounded, so its Gaussian is not cut at the bucket edge: it is sliced out to 6 sigma_z, as DELPHI
     # integrates it (the bucket half length is only 2.8 sigma_z at 1.8 ns). The sinusoidal bucket holds its particles inside
     # +-pi R/h by construction.
-    half_range = max(c.zeta_half_range, 6*sigma_z) if mode == 'linear' else c.zeta_half_range
+    half_range = max(c.zeta_half_range, slicer_nsigma*sigma_z) if mode == 'linear' else c.zeta_half_range
     wake.configure_for_tracking(zeta_range=(-half_range, half_range), num_slices=int(round(num_slices*half_range/c.zeta_half_range)))
     line = c.build({'map': c.one_turn(mode, Qp), 'wake': wake})
     if mode == 'linear':

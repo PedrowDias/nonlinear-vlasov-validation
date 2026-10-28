@@ -21,6 +21,8 @@ AMP_RESCALE = 1e-3              # m: past this centroid the transverse coordinat
 EFOLDINGS = 10                  # of the predicted growth, for a seeded growing mode
 STABLE_TURNS = 24_000           # for a seeded stable mode
 KICKED_TURNS = 100_000          # where no growing mode is predicted
+FIT_SEEDED = 2                  # a seeded run of n turns is fitted from turn n//FIT_SEEDED on: its last half
+FIT_KICKED = 4                  # a kicked run from turn n - n//FIT_KICKED on: its last quarter
 GROWTH_FLOOR = 1e-3             # Q_s: below it a predicted "growth" is not seeded
 h_of = {'linear': c.h/200., 'nonlinear': c.h}       # harmonic number of the bucket the seed is computed in
 
@@ -65,7 +67,7 @@ def run(line, particles, seed, gp, kick_sigma, max_turns):
     if seed is None:
         particles.x += kick_sigma*c.sigma_x
         signal = c.track(line, particles, KICKED_TURNS, amp_rescale=AMP_RESCALE)
-        g, re, grew = c.fit(signal, len(signal) - len(signal)//4)
+        g, re, grew = c.fit(signal, len(signal) - len(signal)//FIT_KICKED)
         return dict(run='kicked', g=g if grew else None, re=re, turns=len(signal)), signal
     b, ev, vec, lmax, nmax, Qp = seed
     w = mode_pattern(b, vec, particles.zeta, particles.delta, lmax, nmax, Qp)
@@ -74,7 +76,7 @@ def run(line, particles, seed, gp, kick_sigma, max_turns):
     particles.px += -np.imag(w)/c.beta_x
     n = c.turns(EFOLDINGS, -ev.imag, max_turns) if gp > 0 else STABLE_TURNS
     signal = c.track(line, particles, n, amp_rescale=AMP_RESCALE)
-    g, re, grew = c.fit(signal, len(signal)//2)
+    g, re, grew = c.fit(signal, len(signal)//FIT_SEEDED)
     return dict(run='seeded', g=g if grew else None, re=re, turns=len(signal)), signal
 
 

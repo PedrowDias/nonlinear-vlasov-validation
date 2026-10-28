@@ -40,8 +40,9 @@ def rows(key, **sel):
     return [r for r in D[key] if all(r[k] == v for k, v in sel.items())]
 
 
-def tag(ax, s, loc):
-    x, y = {'ul': (0.03, 0.95), 'ur': (0.97, 0.95), 'll': (0.03, 0.05), 'lr': (0.97, 0.05)}[loc]
+def tag(ax, s, loc, y=None):
+    x, y0 = {'ul': (0.03, 0.95), 'ur': (0.97, 0.95), 'll': (0.03, 0.05), 'lr': (0.97, 0.05)}[loc]
+    y = y0 if y is None else y
     ax.text(x, y, s, transform=ax.transAxes, va='top' if y > 0.5 else 'bottom', ha='left' if x < 0.5 else 'right', fontsize=8)
 
 
@@ -160,7 +161,7 @@ def resistive_wall():
                        if k not in ('ls', 'color')})
     bx.axhline(1, color=GREY, lw=0.6)
     bx.set_xscale('log'); bx.set_xlabel(r'slices $N_{\rm sl}$'); bx.set_ylabel('tracked / solver')
-    bx.legend(loc='upper right'); tag(bx, '(b)', 'll')
+    bx.legend(loc='upper right'); tag(bx, '(b)', 'll', y=0.10)            # clear of the line at 1
     fig.tight_layout(w_pad=1.0)
     fig.savefig(os.path.join(OUT, 'fig_rw.pdf'))
 
@@ -204,17 +205,17 @@ def coupled_bunch():
         ax.plot(nx + sh, [q['g'] for q in r], label=f'tracking, {name} rf', **ts)
         bx.plot(nx + sh, [q['rep'] for q in r], color=ls['color'], **bar)
         bx.plot(nx + sh, [q['re'] for q in r], **ts)
-        cx.plot(nx + sh, [100*(q['g']/q['gp'] - 1) for q in r], **ts, label=f'{name} rf against its solver')
+        cx.plot(nx + sh, [100*(q['g']/q['gp'] - 1) for q in r], **ts, label=f'{name} rf vs. its solver')
     lin, nl = (sorted(rows('cb', bucket=b), key=lambda q: q['nx']) for b in ('linear', 'nonlinear'))
     nx = np.arange(8)
-    cx.plot(nx, [100*(b['gp']/a['gp'] - 1) for a, b in zip(lin, nl)], color='k', label='solvers: sinusoidal/linear $-$ 1', **bar)
+    cx.plot(nx, [100*(b['gp']/a['gp'] - 1) for a, b in zip(lin, nl)], color='k', label='solvers: sin./lin. $-$ 1', **bar)
     cx.plot(nx, [100*(b['g']/a['g'] - 1) for a, b in zip(lin, nl)], marker='x', ls='none', ms=3.5, mew=0.8, color='k',
-            label='tracking: sinusoidal/linearized $-$ 1')
+            label='tracking: sin./lin. $-$ 1')
     ax.axhline(0, color=GREY, lw=0.6)
     for a_ in (ax, bx, cx):
         a_.set_xlabel(r'coupled-bunch mode $n_x$'); a_.set_xticks(nx)
     ax.set_ylabel(GROWTH + ' (negative: damped)'); bx.set_ylabel(RE); cx.set_ylabel('rate: relative difference (%)')
-    cx.legend(loc='center left', bbox_to_anchor=(0.0, 0.6))
+    cx.legend(loc='center left', bbox_to_anchor=(0.0, 0.6), fontsize=7)
     tag(ax, '(a)', 'lr'); tag(bx, '(b)', 'ul'); tag(cx, '(c)', 'ur')
     cx.set_ylim(-0.6, 2.4)
     fig.tight_layout(w_pad=0.8)

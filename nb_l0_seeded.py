@@ -54,7 +54,7 @@ def run(mode):
     kicked = next(r for r in json.load(open(os.path.join(OUT, 'nb_scan.json')))['tracking'] if r['Nb'] == Nb and r['bucket'] == mode and r['run'] == 'kicked')
     return dict(Nb=Nb, Qp=nb.Qp, bucket=mode, run='seeded', seed=[ev.real, -ev.imag], seed_l0_share=l_share, gp=-target.imag, rep=target.real,
                 g=g, re=x['re'], g_pencil=g_p, re_pencil=re_p, pencil_in_window=bool(inside), turns=x['turns'],
-                dev_pct=100*(g/(-target.imag) - 1) if g is not None else None, g_kicked=kicked['g'], dev_kicked_pct=100*(kicked['g']/(-target.imag) - 1),
+                dev_pct=100*(g/(-target.imag) - 1) if g is not None else None, g_kicked=kicked['g'], dev_kicked_pct=100*(kicked['g']/(-target.imag) - 1) if kicked['g'] is not None else None,
                 delphi_mode_m1=row['delphi_mode_m1'])
 
 
@@ -70,10 +70,10 @@ if __name__ == '__main__':
         json.dump(rows, open(PATH, 'w'), indent=1, default=lambda o: o.item())
         tracked = 'no growth' if x['g'] is None else f"{x['g']:.6f} ({x['dev_pct']:+.2f}% from the prediction {x['gp']:.6f})"
         print(f"Nb = {Nb:.0e}, {mode}: seeded l = 0 mode {x['seed'][0]:+.4f}/{x['seed'][1]:.6f} (l = 0 share {100*x['seed_l0_share']:.1f}%): "
-              f"tracked {tracked}, pencil {x['g_pencil']:.6f}; kicked run {x['dev_kicked_pct']:+.2f}%, {x['turns']} turns "
+              f"tracked {tracked}, pencil {x['g_pencil']:.6f}; kicked run {'no growth' if x['dev_kicked_pct'] is None else format(x['dev_kicked_pct'], '+.2f') + '%'}, {x['turns']} turns "
               f"[{(time.time()-t0)/60:.1f} min]", flush=True)
     by = {r['bucket']: r for r in rows}
-    if len(by) == 2:
+    if len(by) == 2 and all(by[b][k] is not None for b in by for k in ('g', 'g_kicked')):
         print(f"sinusoidal/linearized: seeded {by['nonlinear']['g']/by['linear']['g']:.4f}, kicked {by['nonlinear']['g_kicked']/by['linear']['g_kicked']:.4f}, "
               f"solvers {by['nonlinear']['gp']/by['linear']['gp']:.4f}")
     print('done')

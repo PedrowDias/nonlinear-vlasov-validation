@@ -12,16 +12,16 @@ import psb_q100_candidates as pc
 import psb
 
 PATH = os.path.join(c.DATA, 'validation', 'psb_q100_check.json')
-MODE, QP, RE_M1 = 'nonlinear', -1., 1.149              # the run, and the Re dQ/Qs of the mode m = 1 it grows on
+MODE, QP = 'nonlinear', -1.                            # the run
 
 if __name__ == '__main__':
     t0 = time.time()
     runs = [r for r in json.load(open(os.path.join(c.DATA, 'validation', 'psb_q100.json')))['runs'] if r['Qp'] == QP and r['bucket'] == MODE]
+    kicked = next(r for r in runs if r['run'] == 'kicked')
     res = pc.point(MODE, QP, runs)
-    m = min(res['distinct'], key=lambda d: abs(d['p'].real - RE_M1))
-    assert abs(m['p'].real - RE_M1) < 0.01, m['p']
+    m = min(res['distinct'], key=lambda d: abs(d['p'].real - kicked['re']))      # the mode the kicked run grows on (m = 1)
+    assert abs(m['p'].real - kicked['re']) < 0.05 and round(m['p'].real) == 1, m['p']
     g, re = psb.run(MODE, QP, -m['p'].imag, m['vec'])
-    kicked = runs[0]
     out = dict(Qp=QP, bucket=MODE, run='seeded (self-consistent eigenvector)', g=g, re=re, gp=-m['p'].imag, rep=m['p'].real,
                dev_pct=100*(g/(-m['p'].imag) - 1), g_kicked=kicked['g'], re_kicked=kicked['re'], dev_kicked_pct=100*(kicked['g']/(-m['p'].imag) - 1),
                other_modes=[[d['p'].real, -d['p'].imag] for d in res['distinct'][:6]])

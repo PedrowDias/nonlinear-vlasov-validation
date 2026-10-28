@@ -3,8 +3,9 @@
 # file (so that a long run can be resumed), so this starts from an empty data/: the stored results are moved to
 # data.stored/ first (compare the two afterwards). Weeks of computing time on one machine. This runs the scripts one after
 # the other; each group needs the results of the groups above it, and the scripts within a group can run in parallel,
-# except where a comment says otherwise. psb_delphi_x86.py is not run: it compares DELPHI on the machine it runs on with the
-# stored psb.json (data/validation/psb_delphi_x86.json holds its x86 Linux result).
+# memory permitting (DELPHI at (6,32) on the LHC table needs more than 4 GB per process), except where a comment says
+# otherwise. psb_delphi_x86.py is not run: it compares DELPHI on the machine it runs on with the stored psb.json, so its
+# stored x86 Linux result (data/validation/psb_delphi_x86.json) is copied back from data.stored/.
 #     ./run_all.sh                 # python3 from the PATH
 #     PYTHON=/path/to/python ./run_all.sh
 set -e
@@ -16,6 +17,7 @@ if [ -d data ]; then
     echo "stored results moved to data.stored/"
 fi
 mkdir -p data/validation logs
+if [ -f data.stored/validation/psb_delphi_x86.json ]; then cp data.stored/validation/psb_delphi_x86.json data/validation/; fi
 run() { echo "$(date '+%F %T') $*"; $PY "$@" > "logs/$(echo "$*" | tr ' ' '_').log" 2>&1; }
 
 # 1. the linear limit and the scans of Table I

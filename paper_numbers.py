@@ -8,6 +8,7 @@ Conventions as in the paper: growth rates and tune shifts in units of Q_s; "devi
 "bucket effect" is the ratio of the sinusoidal bucket's growth rate to the linear theory's (most unstable mode, same rms
 length; same full length for the PSB).
 """
+import inspect
 import json
 import os
 import numpy as np
@@ -29,6 +30,7 @@ import linear_limit
 from nonlinear import Jz_upper_from_bunch, Jz_separatrix, Jz_of_kappa
 
 DATA = c.DATA
+FRACTION = {2: 'last half', 3: 'last third', 4: 'last quarter'}          # fit windows as the paper words them
 
 
 def load(name):
@@ -45,7 +47,7 @@ def section(title):
 
 
 def P(label, *values):
-    print(f"  {label}: " + ', '.join(values))
+    print(f"  {label}: " + ', '.join(values) if values else f"  {label}")
 
 
 def f(x, d=1):
@@ -172,8 +174,9 @@ P("Q'_y J_y/(Q_s sigma_z) at |Q'_y| = 20: below", sci_up(20*eps_geo/(c.Qs*c.sigm
 
 section('Sec. IV (matrix eigenvalue problem): the action domain')
 Jup = Jz_upper_from_bunch(c.sigma_z, c.R, c.Qs, c.h, c.eta)[0]
-P('n_sigma; nominal LHC bunch: 6 sigma_z over the half bucket pi R/h; J_up = J_sep', '6', f(6*c.sigma_z/(np.pi*c.R/c.h), 2),
-  str(bool(np.isclose(Jup, Jz_separatrix(c.R, c.Qs, c.h, c.eta)))))
+n_sigma = inspect.signature(Jz_upper_from_bunch).parameters['n_sigma'].default
+P('n_sigma; nominal LHC bunch: J_up = J_sep', f"{n_sigma:g}", str(bool(np.isclose(Jup, Jz_separatrix(c.R, c.Qs, c.h, c.eta)))))
+P('(n_sigma sigma_z over the half bucket pi R/h, nominal bunch)', f(n_sigma*c.sigma_z/(np.pi*c.R/c.h), 2))
 
 section('Appendix C (the orbit to second order in kappa)')
 phi = np.linspace(0, 2*np.pi, 2001)
@@ -227,8 +230,14 @@ P('mode 0 at N_b = 3e11 (Q\' < 0, both buckets): Re dQ from, to', f(max(re0), 2)
 P('two-size criterion: Re dQ within (Q_s), growth within', f"{c.HELD_RE:g}", pct(100*c.HELD_G, 0))
 sep = {tb: bool(np.isclose(Jz_upper_from_bunch(tb*1e-9*c.v/4, c.R, c.Qs, c.h, c.eta)[0], Jz_separatrix(c.R, c.Qs, c.h, c.eta)))
        for tb in np.round(blm.taub_scan*1e9, 2)}
-P('Gaussian LHC bunches: J_up is the separatrix from tau_b (ns) on; the 6 sigma_z cut below', f(min(tb for tb in sep if sep[tb]), 0))
-P('(the bunch lengths with the 6 sigma_z cut, ns)', *[f(tb, 1) for tb in sep if not sep[tb]])
+# in a bucket stretched s times (h -> h/s at fixed Q_s), every Gaussian bunch of the paper is cut at n_sigma sigma_z: the
+# stretches of Sec. V A beyond s = 1 and the 200-fold linear references, for every bunch length of the scans
+stretches = sorted({r[0] for d in ll.values() for r in d['rows'] if r[0] > 1} | {200})
+cut_all = all(not np.isclose(Jz_upper_from_bunch(tb*1e-9*c.v/4, c.R, c.Qs, c.h/st, c.eta)[0], Jz_separatrix(c.R, c.Qs, c.h/st, c.eta))
+              for st in stretches for tb in np.round(blm.taub_scan*1e9, 2))
+P('Gaussian bunches in the LHC bucket: J_up is the separatrix from tau_b (ns) on; the 6 sigma_z cut at (ns); in every stretched bucket',
+  f(min(tb for tb in sep if sep[tb]), 0), *[f(tb, 1) for tb in sep if not sep[tb]], str(cut_all))
+P('(the stretches checked)', *[f"{st:g}" for st in stretches])
 
 # ======================================================================================================================
 section('Table I')
@@ -327,7 +336,7 @@ P('(kicked points of the bunch-length and resistive-wall scans with a second mod
   'linearized ones from 1.6 ns are seeded in the scan)', *[f"{r['file']} {r['bucket']} {r['Qp']:+.0f} {r.get('taub', r.get('slices'))}: {r['second_over_first']:.3f}"
                                                          for r in nd if r['close']])
 P('coordinates scaled down by 1e3 past a centroid of (m); seeded runs fitted over the; kicked runs over the; checks: at least the last (turns)',
-  sci(c.RESCALE), 'last half', 'last quarter', str(tmci_seeds.fit_turns))
+  sci(c.RESCALE), FRACTION[seeded.FIT_SEEDED], FRACTION[seeded.FIT_KICKED], str(tmci_seeds.fit_turns))
 
 # ======================================================================================================================
 section('Sec. V C (LHC): machine and bunch')
@@ -512,7 +521,7 @@ rest = sorted((q for q in grow if abs(dev(q)) >= 1), key=lambda q: q['taub'])
 P('simulations; on the predicted mode; within 1%', str(len(grow)), str(len(on_mode)), str(len(w1)))
 P('the others: bucket, Q\', tau_b (ns), predicted growth, deviation',
   *[f"{q['bucket']} {q['Qp']:+.0f} {q['taub']} {f(q['gp'], 3)} {pct(-dev(q), 2)} low" for q in rest])
-P('kicked runs: e-foldings; linearized slicer at least (sigma_z); basis: lmax, nmax, nmax_check', str(blm.efoldings), '6',
+P('kicked runs: e-foldings; linearized slicer at least (sigma_z); basis: lmax, nmax, nmax_check', str(blm.efoldings), str(blm.slicer_nsigma),
   str(blm.lmax), str(blm.nmax), str(blm.nmax_check))
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -599,7 +608,7 @@ n4 = [dlv[('N4', 'nonlinear', d)] for d in (0.0, 0.10, 0.125, 0.15)]
 P('four kick points, sinusoidal, 0 to 0.15 Q_s: from, to', spct(n4[0]), spct(n4[-1]))
 ctl = [r for r in dlu if r['test'] == 'seeded' and r['variant'] == 'A']
 P('  (the A control reproduces the scan bit for bit)', str(all(r['identical_to_stored_g'] for r in ctl)))
-P('kicked where no mode is predicted to grow: turns', sci(1e5))
+P('kicked where no mode is predicted to grow: turns', sci(seeded.KICKED_TURNS))
 
 # ----------------------------------------------------------------------------------------------------------------------
 section('Sec. V D: resistive wall')
@@ -670,7 +679,7 @@ s_ = np.sin(psbm.h*zz/(2*psbm.R))/psbm.kappa_edge
 lam_sin = np.clip(1 - s_**2, 0, None)              # g0 = (1 - kappa^2/kappa_e^2)^(1/2) integrated over delta
 rms = lambda lam: np.sqrt(np.trapezoid(lam*zz**2, zz)/np.trapezoid(lam, zz))
 P('rms lengths of the two bunches differ by', pct(100*abs(rms(lam_sin)/rms(lam_lin) - 1)))
-dx = loadv('psb_delphi_x86')
+dx = loadv('psb_delphi_x86') if os.path.exists(os.path.join(DATA, 'validation', 'psb_delphi_x86.json')) else None
 dd_ = {r['Qp']: r for r in ps['delphi']}
 top_line = lambda Qp: max(q['gp_line'] for q in runs if q['bucket'] == 'linear' and q['Qp'] == Qp)
 dlp = {Qp: 100*(dd_[Qp]['g']/top_line(Qp) - 1) for Qp in dd_}
@@ -678,8 +687,11 @@ n_lag = len(c.DELPHI.longdistribution_decomp(psbm.taub, typelong='parabolicline'
 P("DELPHI's parabola (Laguerre terms) against the stretched solver at the lines: within, down to Q' = -6; lower at -7, -8", str(n_lag),
   pct(max(abs(dlp[q]) for q in dlp if q >= -6)), pct(-dlp[-7.], 0), pct(-dlp[-8.], 0))
 P("(largest difference for Q' >= -2, in %)", f"{max(abs(dlp[q]) for q in dlp if q >= -2):.1e}")
-dxr = {r['Qp']: r for r in dx['rows']}
-P('(DELPHI on another machine at -7, -8: relative growth difference)', *[pct(100*abs(dxr[Qp]['g_rel_diff']), 0) for Qp in (-7., -8.)])
+if dx is None:                     # psb_delphi_x86.py is machine-specific and not part of run_all.sh
+    P('(DELPHI on another machine at -7, -8: not available, run psb_delphi_x86.py)')
+else:
+    dxr = {r['Qp']: r for r in dx['rows']}
+    P('(DELPHI on another machine at -7, -8: relative growth difference)', *[pct(100*abs(dxr[Qp]['g_rel_diff']), 0) for Qp in (-7., -8.)])
 P('macroparticles; slices; turns of wake memory; e-foldings', sci(psbm.num_particles, 0), str(psbm.num_slices), str(psbm.num_turns_wake), str(psbm.efoldings))
 gmax = max(max(q['gp'], q['gp_line']) for q in runs)
 P('growth rates reach (Q_s); in kHz; resonance half-width (kHz)', f(gmax, 1), f(gmax*psbm.Qs*psbm.f0/1e3, 0), f(psbm.fr/(2*psbm.Qres)/1e3, 0))
@@ -780,5 +792,8 @@ P('conclusion: s = 300 (s = 100 for the coupled-bunch mode); growth between; Re 
   sci(re300[0], 1), sci_up(re300[-1]))
 P('conclusion: sixteen coupled-bunch rates to', pct(np.abs(dcb).max(), 2))
 P('conclusion: LHC bunch fills of the bucket; TMCI threshold lowered by; head-tail factor up to', pct(100*c.taub*1e9/bucket_ns, 0), pct(-th_shift), f(max(eff_bl.values()), 2))
+raised = [tb for tb, x in nl_rep.items() if x < -0.5 and eff_p[tb] > 1]       # Q' = +5: mode -1 the fastest and raised
+P("conclusion: mode -1 raised in bunches of up to (ns); lowered at 1.6, 1.7 ns to (of the linear value)", f(max(raised), 1),
+  f(r_m1[1.6], 2), f(r_m1[1.7], 2))
 P('conclusion: PSB growth rates raised by up to', pct(max(pe.values()), 0))
 P('conclusion: coupled-bunch modes changed by below', pct(np.ceil(max(abs(v) for v in eff_cbp.values())), 0))
