@@ -1,0 +1,45 @@
+{
+ "stored_thresholds_1e11": {
+  "linear": 3.742559776164152,
+  "nonlinear": 3.513105412127748
+ },
+ "variants": [
+  {
+   "matching": "same sigma_z (paper)",
+   "variant": "full (paper)",
+   "threshold_1e11": 3.5131054121277483,
+   "shift_pct": -6.13094720618137
+  },
+  {
+   "matching": "same sigma_z (paper)",
+   "variant": "Omega_s -> omega_s (orbits and shape only)",
+   "threshold_1e11": 3.6725671717671284,
+   "shift_pct": -1.8701799993361967
+  },
+  {
+   "matching": "same sigma_z (paper)",
+   "variant": "Omega_s -> <Omega_s> (adds the mean detuning)",
+   "threshold_1e11": 3.4966209068652185,
+   "shift_pct": -6.571407913516425
+  },
+  {
+   "matching": "same sigma_delta",
+   "variant": "full",
+   "threshold_1e11": 3.875244089485598,
+   "shift_pct": 3.545282407150685,
+   "sigma_z_cm": 8.800131704280313
+  },
+  {
+   "matching": "same emittance",
+   "variant": "full",
+   "threshold_1e11": 3.6476035452425135,
+   "shift_pct": -2.5372001143816547,
+   "sigma_z_cm": 8.017593410677993
+  }
+ ],
+ "decomposition_points": {
+  "orbits_and_shape": -1.8701799993361967,
+  "mean_detuning": -4.701227914180228,
+  "spread": 0.44046070733505527
+ }
+}

@@ -1,0 +1,15 @@
+# The packages of the environment that produced data/ (Python 3.13.1, macOS arm64, Apple M3). xsuite is the meta-package that
+# pins the x* packages below and ships their prebuilt tracking kernels: without it, xtrack >= 0.112 cannot build a tracker.
+# requirements-lock.txt pins every package these pull in:
+#     pip install -r requirements.txt -c requirements-lock.txt
+numpy==2.5.2
+scipy==1.18.0
+matplotlib==3.11.1
+xsuite==0.60.0
+xobjects==0.6.10
+xdeps==0.10.20
+xtrack==0.112.0
+xpart==0.23.18
+xfields==0.27.2
+xwakes==0.2.10
+xcoll==0.12.1

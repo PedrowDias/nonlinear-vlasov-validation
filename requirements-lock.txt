@@ -1,0 +1,40 @@
+# Every package of the Python environment that ran the scripts (Python 3.13.1, macOS arm64, Apple M3). Use it as a constraints
+# file, so that the packages requirements.txt pulls in get these versions too (on x86 Linux this installs 34 of them, all at
+# these versions; mpmath and scipy-stubs are not pulled in):
+#     pip install -r requirements.txt -c requirements-lock.txt
+certifi==2026.7.22
+cffi==2.1.1
+charset-normalizer==3.5.1
+contourpy==1.3.3
+cycler==0.12.1
+Cython==3.3.0
+fonttools==4.63.0
+idna==3.19
+kiwisolver==1.5.0
+lark==1.3.1
+matplotlib==3.11.1
+meson==1.12.0
+mpmath==1.4.1
+numpy==2.5.2
+packaging==26.3
+pandas==3.0.5
+pillow==12.3.0
+pycparser==3.0
+pyparsing==3.3.2
+python-dateutil==2.9.0.post0
+PyYAML==6.0.3
+requests==2.34.2
+ruamel.yaml==0.19.1
+scipy==1.18.0
+scipy-stubs==1.18.0.1
+six==1.17.0
+tqdm==4.70.0
+urllib3==2.7.0
+xcoll==0.12.1
+xdeps==0.10.20
+xfields==0.27.2
+xobjects==0.6.10
+xpart==0.23.18
+xsuite==0.60.0
+xtrack==0.112.0
+xwakes==0.2.10

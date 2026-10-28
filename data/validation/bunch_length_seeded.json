@@ -1,0 +1,248 @@
+[
+ {
+  "taub": 1.6,
+  "bucket": "linear",
+  "mode": "mode -1",
+  "solver": [
+   -0.9805822799545577,
+   0.012972769108782829
+  ],
+  "held": true,
+  "delphi": [
+   -0.9805835279492292,
+   0.0129724246720794
+  ],
+  "g_pencil": 0.013019020546770023,
+  "re_pencil": -0.9804601718358311,
+  "pencil_in_window": true,
+  "g_fit": 0.013020955325649178,
+  "re_fit": -0.9804053147278182,
+  "fit_on_mode": true,
+  "turns": 64270,
+  "seed_sigma": 0.3
+ },
+ {
+  "taub": 1.6,
+  "bucket": "linear",
+  "mode": "l=0 radial",
+  "solver": [
+   0.019797529951233163,
+   0.01214700917905318
+  ],
+  "held": true,
+  "delphi": [
+   0.01979741830819074,
+   0.01214695237844514
+  ],
+  "g_pencil": 0.012127697646419673,
+  "re_pencil": 0.019752397441250184,
+  "pencil_in_window": true,
+  "g_fit": 0.012140470988260346,
+  "re_fit": 0.019730196456123394,
+  "fit_on_mode": true,
+  "turns": 68639,
+  "seed_sigma": 0.3
+ },
+ {
+  "taub": 1.6,
+  "bucket": "nonlinear",
+  "mode": "mode -1",
+  "solver": [
+   -0.9736318575598285,
+   0.010754652276724471
+  ],
+  "held": true,
+  "delphi": null,
+  "g_pencil": 0.010599628741153621,
+  "re_pencil": -0.9737092429496298,
+  "pencil_in_window": true,
+  "g_fit": 0.010603814543074857,
+  "re_fit": -0.9737667153764846,
+  "fit_on_mode": true,
+  "turns": 77526,
+  "seed_sigma": 0.3
+ },
+ {
+  "taub": 1.6,
+  "bucket": "nonlinear",
+  "mode": "l=0 radial",
+  "solver": [
+   0.022299502630013818,
+   0.01367825782658765
+  ],
+  "held": true,
+  "delphi": null,
+  "g_pencil": 0.013699680592929439,
+  "re_pencil": 0.022362107677006828,
+  "pencil_in_window": true,
+  "g_fit": 0.013632765122608734,
+  "re_fit": 0.022276788985436724,
+  "fit_on_mode": true,
+  "turns": 60955,
+  "seed_sigma": 0.3
+ },
+ {
+  "taub": 1.7,
+  "bucket": "linear",
+  "mode": "mode -1",
+  "solver": [
+   -0.9821916722846343,
+   0.0118749293745321
+  ],
+  "held": true,
+  "delphi": [
+   -0.9821930001478071,
+   0.011874580648140197
+  ],
+  "g_pencil": 0.01193352912389637,
+  "re_pencil": -0.9820812559465878,
+  "pencil_in_window": true,
+  "g_fit": 0.011931835648457248,
+  "re_fit": -0.9819788776685527,
+  "fit_on_mode": true,
+  "turns": 70212,
+  "seed_sigma": 0.3
+ },
+ {
+  "taub": 1.7,
+  "bucket": "linear",
+  "mode": "l=0 radial",
+  "solver": [
+   0.018168753965291655,
+   0.011388935984322843
+  ],
+  "held": true,
+  "delphi": [
+   0.018168642582767947,
+   0.0113888810257242
+  ],
+  "g_pencil": 0.011352975162829113,
+  "re_pencil": 0.018130796743279026,
+  "pencil_in_window": true,
+  "g_fit": 0.011358205447140345,
+  "re_fit": 0.018158028309642305,
+  "fit_on_mode": true,
+  "turns": 73208,
+  "seed_sigma": 0.3
+ },
+ {
+  "taub": 1.7,
+  "bucket": "nonlinear",
+  "mode": "mode -1",
+  "solver": [
+   -0.9769477879308391,
+   0.005785615072823348
+  ],
+  "held": true,
+  "delphi": null,
+  "g_pencil": 0.01618274058150719,
+  "re_pencil": -0.9252364522366868,
+  "pencil_in_window": true,
+  "g_fit": 0.01199590507653229,
+  "re_fit": 0.01998247211378157,
+  "fit_on_mode": false,
+  "turns": 144110,
+  "seed_sigma": 0.3
+ },
+ {
+  "taub": 1.7,
+  "bucket": "nonlinear",
+  "mode": "l=0 radial",
+  "solver": [
+   0.02003640555561737,
+   0.012716276250739738
+  ],
+  "held": true,
+  "delphi": null,
+  "g_pencil": 0.012736107979931853,
+  "re_pencil": 0.019958951889775232,
+  "pencil_in_window": true,
+  "g_fit": 0.012710912167359253,
+  "re_fit": 0.019959623009810912,
+  "fit_on_mode": true,
+  "turns": 65567,
+  "seed_sigma": 0.3
+ },
+ {
+  "taub": 1.8,
+  "bucket": "linear",
+  "mode": "mode -1",
+  "solver": [
+   -0.9836144043095344,
+   0.010953126622856442
+  ],
+  "held": true,
+  "delphi": [
+   -0.9836158160913876,
+   0.01095276921944961
+  ],
+  "g_pencil": 0.011025427085671778,
+  "re_pencil": -0.9835274682358612,
+  "pencil_in_window": true,
+  "g_fit": 0.011023021077623114,
+  "re_fit": -0.9836256677801316,
+  "fit_on_mode": true,
+  "turns": 76121,
+  "seed_sigma": 0.3
+ },
+ {
+  "taub": 1.8,
+  "bucket": "linear",
+  "mode": "l=0 radial",
+  "solver": [
+   0.016709271611225276,
+   0.010691383142416524
+  ],
+  "held": true,
+  "delphi": [
+   0.016709168783735743,
+   0.010691335803232135
+  ],
+  "g_pencil": 0.010644210328165826,
+  "re_pencil": 0.01668157058788321,
+  "pencil_in_window": true,
+  "g_fit": 0.010639690777321456,
+  "re_fit": 0.0166837282786787,
+  "fit_on_mode": true,
+  "turns": 77985,
+  "seed_sigma": 0.3
+ },
+ {
+  "taub": 1.8,
+  "bucket": "nonlinear",
+  "mode": "mode -1",
+  "solver": [
+   -0.9788534450412257,
+   0.0019330961177684472
+  ],
+  "held": false,
+  "delphi": null,
+  "g_pencil": 0.010929617172027012,
+  "re_pencil": -0.9642820367052228,
+  "pencil_in_window": true,
+  "g_fit": 0.011691147292850158,
+  "re_fit": 0.017805740543167303,
+  "fit_on_mode": false,
+  "turns": 150000,
+  "seed_sigma": 0.3
+ },
+ {
+  "taub": 1.8,
+  "bucket": "nonlinear",
+  "mode": "l=0 radial",
+  "solver": [
+   0.017863214980644793,
+   0.01176239518222924
+  ],
+  "held": true,
+  "delphi": null,
+  "g_pencil": 0.011658258264152305,
+  "re_pencil": 0.01784237846573791,
+  "pencil_in_window": true,
+  "g_fit": 0.011737218862237964,
+  "re_fit": 0.017843912847524734,
+  "fit_on_mode": true,
+  "turns": 70884,
+  "seed_sigma": 0.3
+ }
+]

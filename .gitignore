@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+data/signals/
+data/validation/damper_lumped_*_*.json
+data/validation/psb_q100_candidates_linear.json
+data/validation/psb_q100_candidates_nonlinear.json
+.DS_Store
+data.stored/
+logs/
+paper_numbers.txt
