@@ -170,7 +170,9 @@ g300 = sorted(x['g300'] for x in LL.values()); re300 = sorted(x['re300'] for x i
 section('Sec. III (linearized Vlasov equation): the neglected chromatic term')
 eps_geo = c.nemitt/(c.beta0*c.gamma)
 P('rms geometric emittance (m) of the LHC beams; normalized (um)', sci(eps_geo, 1), f(c.nemitt*1e6, 1))
-P("Q'_y J_y/(Q_s sigma_z) at |Q'_y| = 20: below", sci_up(20*eps_geo/(c.Qs*c.sigma_z), 0), '(1e-4)')
+x_chrom = 20*eps_geo/(c.Qs*c.sigma_z)
+P("Q'_y J_y/(Q_s sigma_z) at |Q'_y| = 20: below", sci(10**np.ceil(np.log10(x_chrom))))
+P("(Q'_y J_y/(Q_s sigma_z) at |Q'_y| = 20)", sci(x_chrom, 1))
 
 section('Sec. IV (matrix eigenvalue problem): the action domain')
 Jup = Jz_upper_from_bunch(c.sigma_z, c.R, c.Qs, c.h, c.eta)[0]
@@ -190,8 +192,10 @@ for kap in (0.2, 0.1, 0.05, 0.025):
     rz = np.max(np.abs(z/r - np.cos(phi)*(1 + 5*kap**2/48 + kap**2/12*np.sin(phi)**2)))
     rd = np.max(np.abs(d/d_r - np.sin(phi)*(1 - kap**2/16 - kap**2/4*np.cos(phi)**2)))
     rem[kap] = (rz/kap**4, rd/kap**4)
-P('remainders of the second-order orbit z, delta over kappa^4 at kappa = 0.2, 0.1, 0.05, 0.025 (constant: they fall as kappa^4)',
-  *[f"{rem[k][0]:.4f}/{rem[k][1]:.4f}" for k in rem])
+rv = [x for k in rem for x in rem[k]]
+P('remainders of the second-order orbit z, delta fall as kappa^4 (remainder/kappa^4 constant to within 20% from kappa = 0.2 to 0.025)',
+  str(max(rv)/min(rv) < 1.2))
+P('(remainders of z, delta over kappa^4 at kappa = 0.2, 0.1, 0.05, 0.025)', *[f"{rem[k][0]:.4f}/{rem[k][1]:.4f}" for k in rem])
 
 # ======================================================================================================================
 section('Abstract')
@@ -340,7 +344,7 @@ P('coordinates scaled down by 1e3 past a centroid of (m); seeded runs fitted ove
 
 # ======================================================================================================================
 section('Sec. V C (LHC): machine and bunch')
-P('C (km), h, V_rf (MV), Q_s, eta, Q_y0', f(c.circ/1e3, 2), str(c.h), f(c.V_rf/1e6, 0), sci(c.Qs, 3), sci(c.eta, 2), f(c.Qx, 2))
+P('E (TeV), C (km), h, V_rf (MV), Q_s, eta, Q_y0', f(c.E0/1e12, 1), f(c.circ/1e3, 2), str(c.h), f(c.V_rf/1e6, 0), sci(c.Qs, 3), sci(c.eta, 2), f(c.Qx, 2))
 P('R_s (MOhm/m), f_r (GHz), Q_r, tau_b (ns)', f(c.Rs/1e6, 0), f(c.fr/1e9, 1), f(c.Qres, 0), f(c.taub*1e9, 0))
 P('bunch fills of the bucket; bucket length (ns); sigma_z (cm)', pct(100*c.taub*1e9/bucket_ns, 0), f(bucket_ns, 1), f(100*c.sigma_z, 2))
 mt = loadv('matching'); m0 = mt['matchings'][0]

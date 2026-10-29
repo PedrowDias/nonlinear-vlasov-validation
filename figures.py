@@ -216,7 +216,7 @@ def coupled_bunch():
         a_.set_xlabel(r'coupled-bunch mode $n_x$'); a_.set_xticks(nx)
     ax.set_ylabel(GROWTH + ' (negative: damped)'); bx.set_ylabel(RE); cx.set_ylabel('rate: relative difference (%)')
     cx.legend(loc='center left', bbox_to_anchor=(0.0, 0.6), fontsize=7)
-    tag(ax, '(a)', 'lr'); tag(bx, '(b)', 'ul'); tag(cx, '(c)', 'ur')
+    tag(ax, '(a)', 'lr', y=0.10); tag(bx, '(b)', 'ul'); tag(cx, '(c)', 'ur')
     cx.set_ylim(-0.6, 2.4)
     fig.tight_layout(w_pad=0.8)
     fig.legend(*ax.get_legend_handles_labels(), loc='lower center', bbox_to_anchor=(0.5, 0.98), ncol=4, columnspacing=1.5)

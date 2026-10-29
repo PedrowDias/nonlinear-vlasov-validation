@@ -38,8 +38,8 @@ print.
 - Memory: DELPHI at (l_max, n_max) = (6,32) or larger on the LHC broad-band impedance table needs more than 4 GB per process.
 - For the coupled-bunch and PSB cases, DELPHI's nonlinear module prints `warning: compute_impedance_matrix: impedance table
   exhausted ... before convergence`. This is expected: the stored values were computed with these tables, and extending
-  them (the PSB's from 50 to 200 MHz, the coupled-bunch one from 5 to 10 GHz) changes the eigenvalues by at most 1.2e-9
-  relative.
+  them (the PSB's from 50 to 200 MHz, the coupled-bunch one from 5 to 10 GHz) changes the growth rates by at most 1.2e-9
+  relative and the real tune shifts by at most 8e-10 Q_s.
 
 ## Scripts
 
@@ -131,6 +131,6 @@ versions, the solvers' eigenvalues for the LHC cases agree with the stored ones 
 changes the eigenvectors that seed the simulations at the 1e-13 level, and of 25 simulations rerun for up to their first
 200 turns, 23 reproduce the stored centroid signals (single precision) bit for bit and the other two agree to 2e-13 and 1.5e-14
 relative. The exception is DELPHI's PSB scan with its 39-term Laguerre-series parabola, an ill-conditioned problem: from
-Q' = -6 to +4 its eigenvalues differ between the two machines by 1e-14 to 4e-5 Q_s, and at Q' = -8 and -7 its most unstable
+Q' = -6 to +4 its eigenvalues differ between the two machines by 1e-12 to 4e-5 Q_s, and at Q' = -8 and -7 its most unstable
 mode is a different one, with a growth rate 9% and 0.5% apart (`psb_delphi_x86.json`, Sec. V E of the paper). A different
 seed of the macroparticle draw scatters the tracked growth rates by up to about 1% (`multiseed.py`).
